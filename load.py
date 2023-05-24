@@ -1,11 +1,12 @@
 import openai
 import requests
+import time as t
 from bs4 import BeautifulSoup
 
 
 # GPT-3.5 modelini ve API anahtarınızı belirtin
 model = "gpt-3.5-turbo"
-api_key = 
+api_key = "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"
 
 # OpenAI API'sine bağlanın
 openai.api_key = api_key
@@ -42,7 +43,7 @@ while True:
             link.append({"link":href_url,"time":x})
 
 
-            if x == "1h":
+            if x == "1m":
                 if href_url not in link_tespit:
                     link_tespit.append({"link":href_url,
                                        "time":x})
@@ -60,6 +61,15 @@ while True:
             p_list = url_soup.find_all("p")
             img = url_soup.find("img",{"loading":"eager"})
 
+            for h1 in h1_list:
+                h1_text = h1.text
+                h1_dict.append(h1_text)
+
+            for p in range(5):
+                p_text = p_list[p].text
+                p_dict.append(p_text)
+
+
             if img:
                 img_href = img.get('src')
                 img_r = requests.get(img_href)
@@ -69,7 +79,7 @@ while True:
             else:
 
 
-                url = f"https://yandex.com/images/search?text=Investigation over truck crash near White House"
+                url = f"https://yandex.com/images/search?text="f"{h1_dict[0]}"""
                 headers = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"}
                 response = requests.get(url, headers=headers)
@@ -77,17 +87,12 @@ while True:
                 images = soup.find_all("img", class_="serp-item__thumb justifier__thumb")
                 image_urls = [img["src"] for img in images]
                 img_con = requests.get("https:"f"{image_urls[0]}""")
+                print(url)
 
                 with open("image.jpg", "wb") as file:
                     file.write(img_con.content)
 
-            for h1 in h1_list:
-                h1_text = h1.text
-                h1_dict.append(h1_text)
 
-            for p in range(5):
-                p_text = p_list[p].text
-                p_dict.append(p_text)
 
             def get_chat_response(prompt):
                 try:
@@ -142,16 +147,17 @@ while True:
 
 
             # Sayfa erişim anahtarını, sayfa kimliğini, paylaşım mesajını ve resim yolunu girin
-            page_access_token = 
-            page_id = 
+            page_access_token = "EAAI2DSTGdt4BAH57TnejZC47QmETue3x9oG29k1btOZAnB9ApErSWWCoNkJDAsebG7ZBif65oUZCyzCz5xWZCyIrxUmq0fN66Xx9UtkXWxhlI1wliMjwIFHHEa3JRR2ZCUH2AZAyiE6ItE194ij6dKREHWfnD11sOrQuE423hEsqlGqCVco9Gdq"
+            page_id = "113805318384764"
             message = response
-            image_path ="/root/pyhton-test/image.jpg"
+            image_path = "C:/Users/m13t3/PycharmProjects/new_global/image.jpg"
 
             # Sayfa paylaşımını gerçekleştirin
             post_to_facebook_page(page_access_token, page_id, message, image_path)
 
 
             son_href = link_tespit[0]['link']
+            t.sleep(120)
 
 
 
